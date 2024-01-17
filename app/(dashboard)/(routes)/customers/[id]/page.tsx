@@ -3,7 +3,7 @@ import Card from "react-bootstrap/Card";
 import useSWR, { Fetcher } from "swr";
 import Link from "next/link";
 import { ICustomer } from "@/app/types/backend";
-import handleCustomers from "@/APIs/handleCustomer";
+import handleCustomers from "@/api/handleCustomer";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const ViewDetailCustomer = ({ params }: { params: { id: string } }) => {

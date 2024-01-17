@@ -34,7 +34,7 @@ import CreateModal from "./create.modal";
 import { toast } from "react-toastify";
 
 import { Dialog, DialogTrigger } from "../ui/dialog";
-import handleCustomers from "@/APIs/handleCustomer";
+import handleCustomers from "@/api/handleCustomer";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -96,7 +96,7 @@ export function DataCustomerTable() {
         `/KhachHang/XoaKhachHang/${id}`
       );
       if (res) {
-        toast.error("Delete Success!...");
+        toast.error("Xóa thành công!...");
         getAllCustomers();
       }
     } catch (error) {
@@ -120,9 +120,12 @@ export function DataCustomerTable() {
     setFilteredData(filteredData);
   }, [apiData, searchTerm]);
 
+  const filteredAndSortedData = filteredData
+    .slice()
+    .sort((a, b) => b.khachHangID - a.khachHangID);
   const startIndex = (currentPage - 1) * rowsPerPage;
   const endIndex = startIndex + rowsPerPage;
-  const paginatedData = filteredData.slice(startIndex, endIndex);
+  const paginatedData = filteredAndSortedData.slice(startIndex, endIndex);
 
   const columns: ColumnDef<ICustomer>[] = [
     {
@@ -172,18 +175,10 @@ export function DataCustomerTable() {
     },
     {
       accessorKey: "sdt",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Số Điện Thoại
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        );
-      },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("sdt")}</div>,
+      header: "Số Điện Thoại",
+      cell: ({ row }) => (
+        <div className="capitalize">{row.getValue("sdt")}</div>
+      ),
     },
     {
       id: "actions",

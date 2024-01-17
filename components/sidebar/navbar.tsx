@@ -16,7 +16,7 @@ const Navigation = () => {
     <div className="px-4">
       {
         NAVIGATIONS.map(({ title, url, icon }, index) =>
-          <div key={index} className="mb-2">
+          <div key={index} className="mb-2 ">
             <Link href={url} onClick={handleClose}>
               <div
                 className={cn(

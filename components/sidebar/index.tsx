@@ -24,22 +24,24 @@ const Sidebar: React.FC<SidebarProps> = ({ className }) => {
           <SidebarToggle />
         </div>
       </div>
-      <div className="grow overflow-y-auto scroll-smooth scrollbar-none">
-        <Navbar />
-      </div>
-      <div
-        className={cn(
-          "fixed bottom-8 left-4 right-4",
-          "lg:left-7 lg:right-auto",
-          isMinimal && "lg:left-3"
-        )}
-      >
-        <div className="mb-4 p-4 rounded-lg bg-gray-900">
-          <div className="mb-4 flex items-center">
-            <AccoutAction/>
-          </div>
+      <div className="flex flex-col menu_bar">
+        <div className="  grow overflow-y-auto scroll-smooth scrollbar-none">
+          <Navbar />
         </div>
-        <ThemeToggle />
+        <div
+          className={cn(
+            "bottom-8 left-4 right-4",
+            "lg:left-7 lg:right-auto pl-5 pr-5",
+            isMinimal && "lg:left-3"
+          )}
+        >
+          <div className="mb-4 p-4 rounded-lg bg-gray-900">
+            <div className="mb-4 flex items-center">
+              <AccoutAction />
+            </div>
+          </div>
+          <ThemeToggle />
+        </div>
       </div>
     </div>
   );

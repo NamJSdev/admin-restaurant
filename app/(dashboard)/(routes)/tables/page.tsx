@@ -1,6 +1,8 @@
+import {DataFoodOptionTable} from "@/components/tables/app.table";
+
 const TablePage = () => {
   return (
-    <div>TablePage</div>
+    <DataFoodOptionTable/>
   )
 }
 

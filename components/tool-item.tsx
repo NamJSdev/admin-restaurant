@@ -18,6 +18,10 @@ const toolItemColorVariants = cva(
         users: "bg-blue-500",
         customers: "bg-blue-500",
         chefs: "bg-blue-500",
+        admins: "bg-blue-500",
+        blogs: "bg-blue-500",
+        contacts: "bg-blue-500",
+        feedbacks: "bg-blue-500",
       },
     },
   }
@@ -28,7 +32,7 @@ export interface ToolItemProps {
   title: string;
   url: string;
   color?: string;
-  slug: "users" | "customers" | "bills" | "foods" | "tables" | "chefs";
+  slug: "users" | "customers" | "bills" | "foods" | "tables" | "chefs" | "admins" | "blogs" | "contacts" | "feedbacks";
 }
 
 const ToolItem: React.FC<ToolItemProps> = ({ icon, title, url, slug }) => {

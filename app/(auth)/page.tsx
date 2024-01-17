@@ -1,7 +1,9 @@
 const AuthPage = () => {
-  return (
-    <div>AuthPage</div>
-  )
+    return (
+        <div>
+            auth
+        </div>
+    )
 }
 
 export default AuthPage

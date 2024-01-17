@@ -1,6 +1,8 @@
+import { DataBillTable } from "@/components/bills/app.table"
+
 const BillPage = () => {
   return (
-    <div>BillPage</div>
+    <DataBillTable/>
   )
 }
 

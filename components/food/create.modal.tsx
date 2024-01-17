@@ -1,96 +1,193 @@
 "use client";
-import { Button } from "@/components/ui/button";
+import {useState} from "react";
+import {toast} from "react-toastify";
+import {mutate} from "swr";
+import {DialogContent, DialogHeader, DialogTitle} from "../ui/dialog";
+import {Input, Button, Typography, ThemeProvider} from "@material-tailwind/react";
+import handleFood from "@/api/handleFood";
 import {
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useState } from "react";
-import { toast } from "react-toastify";
-import { mutate } from "swr";
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
+import * as React from "react";
+import value = ThemeProvider.propTypes.value;
 
-interface IProps {
-  showModalCreate: boolean;
-  setShowModalCreate: (value: boolean) => void;
+interface CreateFoodModalProps {
+    reloadData: () => void;
 }
-function CreateModal(props: IProps) {
-  const { showModalCreate, setShowModalCreate } = props;
 
-  const [hoTen, setName] = useState<string>("");
-  const [ngaySinh, setBirthday] = useState<string>("");
-  const [diaChi, setAddress] = useState<string>("");
-  const [sdt, setPhone] = useState<string>("");
-  const handleSubmit = () => {
-    if (!hoTen) {
-      toast.error("Not empty hoTen !...");
-      return;
-    }
-    if (!ngaySinh) {
-      toast.error("Not empty hoTen !...");
-      return;
-    }
-    if (!diaChi) {
-      toast.error("Not empty hoTen !...");
-      return;
-    }
-    if (!sdt) {
-      toast.error("Not empty hoTen !...");
-      return;
-    }
-    fetch("http://localhost:8000/HienThiKhachHang", {
-      method: "POST",
-      headers: {
-        Accept: "application/json, text/plain, */*",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ hoTen, ngaySinh, diaChi, sdt }),
+function CreateFoodModal({reloadData}: CreateFoodModalProps) {
+    const [isUploading, setIsUploadLoading] = useState(false);
+    const [foodData, setFoodData] = useState({
+        loaiMonAnID: "",
+        tenMon: "",
+        moTa: "",
+        giaTien: "",
+        anhMonAn1URL: File,
     })
-      .then((res) => res.json())
-      .then((res) => {
-        if (res) {
-          toast.success("Create New Blog Success !...");
-          handleClose();
-          mutate<string>("http://localhost:8000/blogs");
+    const [apiFoodOptionData, setFoodOptionData] = useState([]);
+    const getAllFoodOptitons = async () => {
+        const api = "/LoaiMonAn/HienThiLoaiMonAn";
+        try {
+            const res = await handleFood.getFoodOption(api);
+            if (res) {
+                const foodOptionData = res.data;
+                setFoodOptionData(foodOptionData);
+            } else {
+                console.log(`Food list option not found`);
+            }
+        } catch (error) {
+            console.error("Lỗi khi lấy dữ liệu từ API:", error);
         }
-      });
-    // console.log(">>> Check data",hoTen,ngaySinh,diaChi);
-  };
-  const handleClose = () => {
-    setName("");
-    setBirthday("");
-    setAddress("");
-    setPhone("");
-    setShowModalCreate(false);
-  };
-  return (
-    <DialogContent className="sm:max-w-[425px]">
-      <DialogHeader>
-        <DialogTitle>Edit profile</DialogTitle>
-        <DialogDescription>Make changes to your profile here</DialogDescription>
-      </DialogHeader>
-      <div className="grid gap-4 py-4">
-        <div className="grid grid-cols-4 items-center gap-4">
-          <Label htmlFor="name" className="text-right">
-            Name
-          </Label>
-          <Input id="name" value="Pedro Duarte" className="col-span-3" />
-        </div>
-        <div className="grid grid-cols-4 items-center gap-4">
-          <Label htmlFor="username" className="text-right">
-            Username
-          </Label>
-          <Input id="username" value="@peduarte" className="col-span-3" />
-        </div>
-      </div>
-      <DialogFooter>
-        <Button type="submit">Save changes</Button>
-      </DialogFooter>
-    </DialogContent>
-  );
+    };
+    React.useEffect(() => {
+        getAllFoodOptitons();
+    }, []);
+    const handleValueChange = (value : string) => {
+        setFoodData({...foodData, loaiMonAnID: value});
+    };
+    const handleCreateFood = async () => {
+        setIsUploadLoading(true);
+        try {
+            if (!(foodData.anhMonAn1URL instanceof File)) {
+                throw new Error("Invalid image file");
+            }
+            await handleFood.addFood(foodData);
+            // gọi lại dữ liệu
+            reloadData();
+            setIsUploadLoading(false);
+            toast.success("Thêm mới món ăn!");
+            setFoodData({
+                loaiMonAnID: "",
+                tenMon: "",
+                moTa: "",
+                giaTien: "",
+                anhMonAn1URL: File,
+            });
+        } catch (error) {
+            console.error("Error adding chef:", error);
+            toast.error("Thêm mới không thành công. Vui lòng thử lại.");
+        }
+    };
+    // @ts-ignore
+    return (
+        <>
+            <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                    <DialogTitle>Thêm Mới Món Ăn</DialogTitle>
+                </DialogHeader>
+                <form className="mt-8 mb-2 w-80 max-w-screen-lg sm:w-96">
+                    <div className="mb-1 flex flex-col gap-6">
+                        <Typography
+                            id="name"
+                            variant="h6"
+                            color="blue-gray"
+                            className="-mb-3"
+                        >
+                            Loại Món Ăn
+                        </Typography>
+                        <Select onValueChange={handleValueChange}>
+                            <SelectTrigger >
+                                <SelectValue placeholder="Loại Món Ăn"/>
+                            </SelectTrigger>
+                            <SelectContent>
+                                {
+                                    apiFoodOptionData.map((option) => (
+                                        // eslint-disable-next-line react/jsx-key
+                                        <SelectItem value={`${option.id}`}>{option.tenLoai}</SelectItem>
+                                    ))
+                                }
+                            </SelectContent>
+                        </Select>
+                        <Typography
+                            id="name"
+                            variant="h6"
+                            color="blue-gray"
+                            className="-mb-3"
+                        >
+                            Tên Món Ăn
+                        </Typography>
+                        <Input
+                            size="lg"
+                            placeholder="Tên món ăn"
+                            className=" !border-t-blue-gray-200 focus:!border-t-gray-900 "
+                            labelProps={{
+                                className: "before:content-none after:content-none",
+                            }}
+                            value={foodData.tenMon}
+                            onChange={(e) =>
+                                setFoodData({...foodData, tenMon: e.target.value})
+                            }
+                            required
+                        />
+                        <Typography variant="h6" color="blue-gray" className="-mb-3">
+                            Mô tả
+                        </Typography>
+                        <Input
+                            size="lg"
+                            placeholder="Mô Tả món ăn"
+                            className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
+                            labelProps={{
+                                className: "before:content-none after:content-none",
+                            }}
+                            value={foodData.moTa}
+                            onChange={(e) =>
+                                setFoodData({...foodData, moTa: e.target.value})
+                            }
+                            required
+                        />
+                        <Typography variant="h6" color="blue-gray" className="-mb-3">
+                            Giá tiền
+                        </Typography>
+                        <Input
+                            size="lg"
+                            placeholder="Giá tiền"
+                            className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
+                            labelProps={{
+                                className: "before:content-none after:content-none",
+                            }}
+                            value={foodData.giaTien}
+                            onChange={(e) =>
+                                setFoodData({...foodData, giaTien: e.target.value})
+                            }
+                            required
+                        />
+
+                        <Typography variant="h6" color="blue-gray" className="-mb-3">
+                            Ảnh món ăn
+                        </Typography>
+                        <Input
+                            type="file"
+                            size="lg"
+                            placeholder="Tải lên ảnh món ăn"
+                            className=" !border-t-blue-gray-200 focus:!border-t-gray-900 "
+                            labelProps={{
+                                className: "before:content-none after:content-none",
+                            }}
+                            onChange={(e) => {
+                                const file = e.target.files && e.target.files[0];
+                                if (file) {
+                                    setFoodData({...foodData, anhMonAn1URL: file});
+                                }
+                            }}
+                            required
+                        />
+                    </div>
+                    <Button
+                        type="button"
+                        onClick={handleCreateFood}
+                        className="mt-6"
+                        fullWidth
+                    >
+                        {isUploading ? "Đang thêm..." : "Thêm"}
+                    </Button>
+                </form>
+            </DialogContent>
+        </>
+    );
 }
 
-export default CreateModal;
+export default CreateFoodModal;

@@ -2,7 +2,7 @@ import { ToolItemProps } from "./components/tool-item";
 
 export const TOOLS: ToolItemProps[] = [
   {
-    title: "Hóa Đơn",
+    title: "Danh Sách Đặt Bàn",
     icon: "/icons/bills.svg",
     url: "/bills",
     color: "bg-blue-500",
@@ -29,19 +29,47 @@ export const TOOLS: ToolItemProps[] = [
     color: "bg-blue-500",
     slug: "chefs"
   },
+  // {
+  //   title: "Khách Hàng",
+  //   icon: "/icons/customers.svg",
+  //   url: "/customers",
+  //   color: "bg-blue-500",
+  //   slug: "customers"
+  // },
   {
-    title: "Khách Hàng",
-    icon: "/icons/customers.svg",
-    url: "/customers",
+    title: "Feedback",
+    icon: "/icons/feedbacks.svg",
+    url: "/feedbacks",
     color: "bg-blue-500",
-    slug: "customers"
+    slug: "feedbacks"
   },
   {
-    title: "Người Dùng",
+    title: "Liên Hệ",
+    icon: "/icons/contacts.svg",
+    url: "/contacts",
+    color: "bg-blue-500",
+    slug: "contacts"
+  },
+  {
+    title: "Bài Viết",
+    icon: "/icons/blogs.svg",
+    url: "/blogs",
+    color: "bg-blue-500",
+    slug: "blogs"
+  },
+  {
+    title: "Tài Khoản Khách Hàng",
     icon: "/icons/users.svg",
     url: "/users",
     color: "bg-blue-500",
     slug: "users"
+  },
+  {
+    title: "Admin",
+    icon: "/icons/admin.svg",
+    url: "/admins",
+    color: "bg-blue-500",
+    slug: "admins"
   },
 ];
 
@@ -71,3 +99,5 @@ export const THEME_MODES = [
     value: "dark"
   },
 ];
+
+export const BASE_URL = `https://localhost:44317`
